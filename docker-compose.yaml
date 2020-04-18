@@ -82,7 +82,7 @@ services:
     - "kafka0"
     - "schema-registry"
 
-  ksql:
+  ksql-server:
     image: confluentinc/cp-ksql-server:5.2.2
     ports:
     - "8088:8088"
@@ -94,6 +94,15 @@ services:
     depends_on:
     - "kafka0"
     - "schema-registry"
+
+  ksql-cli:
+    image: confluentinc/cp-ksql-cli:5.2.2
+    container_name: ksql-cli
+    depends_on:
+      - kafka0
+      - ksql-server
+    entrypoint: /bin/sh
+    tty: true
 
   connect-ui:
     image: landoop/kafka-connect-ui:0.9.7
