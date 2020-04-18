@@ -5,8 +5,6 @@ import random
 
 import pandas as pd
 
-from models.producer import Producer
-
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +33,12 @@ class TurnstileHardware:
     @classmethod
     def _load_data(cls):
         if cls.curve_df is None:
+            logger.info('Loading ridership_curve.csv')
             cls.curve_df = pd.read_csv(
                 f"{Path(__file__).parents[1]}/data/ridership_curve.csv"
             )
         if cls.seed_df is None:
+            logger.info('Loading ridership_seed.csv')
             cls.seed_df = pd.read_csv(
                 f"{Path(__file__).parents[1]}/data/ridership_seed.csv"
             )
