@@ -1,5 +1,4 @@
 """Defines functionality relating to train lines"""
-import collections
 from enum import IntEnum
 import logging
 
@@ -16,6 +15,7 @@ class Line:
     num_directions = 2
 
     def __init__(self, color, station_data, num_trains=10):
+        logger.info(f"line#{color}: Initializing...")
         self.color = color
         self.num_trains = num_trains
         self.stations = self._build_line_data(station_data)
@@ -25,6 +25,7 @@ class Line:
 
     def _build_line_data(self, station_df):
         """Constructs all stations on the line"""
+        logger.info(f"Line#{self.color}: Constructing Stations on the Line")
         stations = station_df["station_name"].unique()
 
         station_data = station_df[station_df["station_name"] == stations[0]]
@@ -47,6 +48,7 @@ class Line:
 
     def _build_trains(self):
         """Constructs and assigns train objects to stations"""
+        logger.info(f"Line#{self.color}: Assigning Train objects to Stations")
         trains = []
         curr_loc = 0
         b_dir = True
