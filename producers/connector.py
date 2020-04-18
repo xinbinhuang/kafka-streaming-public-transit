@@ -4,14 +4,14 @@ import logging
 
 import requests
 
-from config import Connections, Topics, join_topic_name
+from config import Connections, Topics
 from models.producer import Producer
 
 
 logger = logging.getLogger(__name__)
 
 KAFKA_CONNECT_URL = f"{Connections.CONNECT}/connectors"
-TABLE_NAME = "stations"
+TOPIC_PREFIX, TABLE_NAME = Topics.STATIONS.rsplit('.', maxsplit=1)
 CONNECTOR_NAME = f"jdbc_source_postgres_{TABLE_NAME}"
 
 
@@ -24,7 +24,8 @@ def configure_connector():
         logging.debug("connector already created skipping recreation")
         return
 
-    Producer(topic_name=join_topic_name(Topics.STATIONS_PREFIX, TABLE_NAME), num_partitions=2)
+    # create required topic for sending data to Kafka
+    Producer(topic_name=Topics.STATIONS, num_partitions=2)
 
     resp = requests.post(
         KAFKA_CONNECT_URL,
@@ -45,7 +46,7 @@ def configure_connector():
                     "table.whitelist": TABLE_NAME,
                     "mode": "incrementing",
                     "incrementing.column.name": "stop_id",
-                    "topic.prefix": f"{Topics.STATION_PREFIX}.",
+                    "topic.prefix": f"{TOPIC_PREFIX}.",
                     "poll.interval.ms": 60000,
                 },
             }
