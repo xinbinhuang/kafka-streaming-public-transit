@@ -27,7 +27,7 @@ class Station(Producer):
         self.turnstile = Turnstile(self)
 
         station_name = normalize_station_name(self.name)
-        topic_name = join_topic_name(Topics.ARRIVAL_PREFIX, station_name)
+        topic_name = join_topic_name(Topics.ARRIVALS_PREFIX, station_name)
         super().__init__(
             topic_name=topic_name,
             key_schema=Station.key_schema,

@@ -4,7 +4,7 @@ import logging
 from config import join_topic_name, Topics
 from models.producer import Producer
 from models.turnstile_hardware import TurnstileHardware
-from models.utils import load_schema, normalize_station_name, RecordSchema
+from models.utils import load_schema, RecordSchema
 
 
 logger = logging.getLogger(__name__)
@@ -16,10 +16,8 @@ class Turnstile(Producer):
 
     def __init__(self, station):
         """Create the Turnstile"""
-        station_name = normalize_station_name(station.name)
-        topic_name = join_topic_name(Topics.TURNSTILE_PREFIX, station_name)
         super().__init__(
-            topic_name=topic_name,
+            topic_name=Topics.TURNSTILES,
             key_schema=Turnstile.key_schema,
             value_schema=Turnstile.value_schema,
             num_partitions=3,

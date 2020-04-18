@@ -24,7 +24,7 @@ def configure_connector():
         logging.debug("connector already created skipping recreation")
         return
 
-    Producer(topic_name=join_topic_name(Topics.STATION_PREFIX, TABLE_NAME), num_partitions=2)
+    Producer(topic_name=join_topic_name(Topics.STATIONS_PREFIX, TABLE_NAME), num_partitions=2)
 
     resp = requests.post(
         KAFKA_CONNECT_URL,

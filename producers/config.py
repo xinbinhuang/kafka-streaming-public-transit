@@ -22,7 +22,7 @@ class Connections:
 
 
 class Topics:
-    ARRIVAL_PREFIX: str = join_topic_name(NAMESPACE, "station.arrivals")
-    TURNSTILE_PREFIX: str = join_topic_name(NAMESPACE, "station.turnstils")
-    STATION_PREFIX: str = NAMESPACE
+    ARRIVALS_PREFIX: str = join_topic_name(NAMESPACE, "station.arrivals")
+    TURNSTILES: str = join_topic_name(NAMESPACE, "station.turnstils.v1")
+    STATIONS_PREFIX: str = NAMESPACE
     WEATHER: str = join_topic_name(NAMESPACE, 'weather.v1')
