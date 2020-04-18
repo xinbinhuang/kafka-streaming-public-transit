@@ -4,12 +4,16 @@ import logging
 
 import requests
 
+from config import Connections, NAMESPACE, join_topic_name
+from models.producer import Producer
+
 
 logger = logging.getLogger(__name__)
 
+KAFKA_CONNECT_URL = f"{Connections.CONNECT}/connectors"
+TABLE_NAME = "stations"
+CONNECTOR_NAME = f"jdbc_source_postgres_{TABLE_NAME}"
 
-KAFKA_CONNECT_URL = "http://localhost:8083/connectors"
-CONNECTOR_NAME = "stations"
 
 def configure_connector():
     """Starts and configures the Kafka Connect connector"""
@@ -20,54 +24,37 @@ def configure_connector():
         logging.debug("connector already created skipping recreation")
         return
 
-    # TODO: Complete the Kafka Connect Config below.
-    # Directions: Use the JDBC Source Connector to connect to Postgres. Load the `stations` table
-    # using incrementing mode, with `stop_id` as the incrementing column name.
-    # Make sure to think about what an appropriate topic prefix would be, and how frequently Kafka
-    # Connect should run this connector (hint: not very often!)
-        return
+    Producer(topic_name=join_topic_name(NAMESPACE, TABLE_NAME), num_partitions=2)
 
-    # TODO: Complete the Kafka Connect Config below.
-    # Directions: Use the JDBC Source Connector to connect to Postgres. Load the `stations` table
-    # using incrementing mode, with `stop_id` as the incrementing column name.
-    # Make sure to think about what an appropriate topic prefix would be, and how frequently Kafka
-    # Connect should run this connector (hint: not very often!)
-    logger.info("connector code not completed skipping connector creation")
-    #resp = requests.post(
-    #    KAFKA_CONNECT_URL,
-    #    headers={"Content-Type": "application/json"},
-    #    data=json.dumps({
-    #        "name": CONNECTOR_NAME,
-    #        "config": {
-    #            "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
-    #            "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    #            "key.converter.schemas.enable": "false",
-    #            "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    #            "value.converter.schemas.enable": "false",
-    #            "batch.max.rows": "500",
-    #            # TODO
-    #            "connection.url": "",
-    #            # TODO
-    #            "connection.user": "",
-    #            # TODO
-    #            "connection.password": "",
-    #            # TODO
-    #            "table.whitelist": "",
-    #            # TODO
-    #            "mode": "",
-    #            # TODO
-    #            "incrementing.column.name": "",
-    #            # TODO
-    #            "topic.prefix": "",
-    #            # TODO
-    #            "poll.interval.ms": "",
-    #        }
-    #    }),
-    #)
+    resp = requests.post(
+        KAFKA_CONNECT_URL,
+        headers={"Content-Type": "application/json"},
+        data=json.dumps(
+            {
+                "name": CONNECTOR_NAME,
+                "config": {
+                    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+                    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+                    "key.converter.schemas.enable": "false",
+                    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+                    "value.converter.schemas.enable": "false",
+                    "batch.max.rows": 500,
+                    "connection.url": Connections.POSTGRES.get("connection.url"),
+                    "connection.user": Connections.POSTGRES.get("user"),
+                    "connection.password": Connections.POSTGRES.get("password"),
+                    "table.whitelist": TABLE_NAME,
+                    "mode": "incrementing",
+                    "incrementing.column.name": "stop_id",
+                    "topic.prefix": f"{NAMESPACE}.",
+                    "poll.interval.ms": 60000,
+                },
+            }
+        ),
+    )
 
     ## Ensure a healthy response was given
-    #resp.raise_for_status()
-    #logging.debug("connector created successfully")
+    resp.raise_for_status()
+    logging.debug("connector created successfully")
 
 
 if __name__ == "__main__":
