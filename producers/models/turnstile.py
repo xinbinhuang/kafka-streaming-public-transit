@@ -1,48 +1,29 @@
 """Creates a turnstile data producer"""
 import logging
-from pathlib import Path
 
-from confluent_kafka import avro
-
+from config import join_topic_name, TopicPrefixes
 from models.producer import Producer
 from models.turnstile_hardware import TurnstileHardware
+from models.utils import load_schema, normalize_station_name, RecordSchema
 
 
 logger = logging.getLogger(__name__)
 
 
 class Turnstile(Producer):
-    key_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/turnstile_key.json")
-
-    #
-    # TODO: Define this value schema in `schemas/turnstile_value.json, then uncomment the below
-    #
-    #value_schema = avro.load(
-    #    f"{Path(__file__).parents[0]}/schemas/turnstile_value.json"
-    #)
+    key_schema: RecordSchema = load_schema("turnstile_key.json")
+    value_schema: RecordSchema = load_schema("turnstile_value.json")
 
     def __init__(self, station):
         """Create the Turnstile"""
-        station_name = (
-            station.name.lower()
-            .replace("/", "_and_")
-            .replace(" ", "_")
-            .replace("-", "_")
-            .replace("'", "")
-        )
-
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
+        station_name = normalize_station_name(station.name)
+        topic_name = join_topic_name(TopicPrefixes.TURNSTILE, station_name)
         super().__init__(
-            f"{station_name}", # TODO: Come up with a better topic name
+            topic_name=topic_name,
             key_schema=Turnstile.key_schema,
-            # TODO: value_schema=Turnstile.value_schema, TODO: Uncomment once schema is defined
-            # TODO: num_partitions=???,
-            # TODO: num_replicas=???,
+            value_schema=Turnstile.value_schema,
+            num_partitions=3,
+            num_replicas=1,
         )
         self.station = station
         self.turnstile_hardware = TurnstileHardware(station)
@@ -50,10 +31,19 @@ class Turnstile(Producer):
     def run(self, timestamp, time_step):
         """Simulates riders entering through the turnstile."""
         num_entries = self.turnstile_hardware.get_entries(timestamp, time_step)
-        logger.info("turnstile kafka integration incomplete - skipping")
-        #
-        #
-        # TODO: Complete this function by emitting a message to the turnstile topic for the number
-        # of entries that were calculated
-        #
-        #
+        logger.debug(
+            f"[{timestamp.isoformat()}] Riders count: {num_entries} @ {self.station.name}"
+        )
+        for _ in range(num_entries):
+            try:
+                self.producer.produce(
+                    topic=self.topic_name,
+                    key={"timestamp": self.time_millis()},
+                    value={
+                        "station_id": self.station.station_id,
+                        "station_name": self.station.name,
+                        "line": self.station.color.name,
+                    },
+                )
+            except Exception as exc:
+                logger.error(f"Failed to send message to Kafka: `{exc}`")
