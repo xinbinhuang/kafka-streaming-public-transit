@@ -1,7 +1,7 @@
 """Creates a turnstile data producer"""
 import logging
 
-from config import join_topic_name, TopicPrefixes
+from config import join_topic_name, Topics
 from models.producer import Producer
 from models.turnstile_hardware import TurnstileHardware
 from models.utils import load_schema, normalize_station_name, RecordSchema
@@ -17,7 +17,7 @@ class Turnstile(Producer):
     def __init__(self, station):
         """Create the Turnstile"""
         station_name = normalize_station_name(station.name)
-        topic_name = join_topic_name(TopicPrefixes.TURNSTILE, station_name)
+        topic_name = join_topic_name(Topics.TURNSTILE_PREFIX, station_name)
         super().__init__(
             topic_name=topic_name,
             key_schema=Turnstile.key_schema,

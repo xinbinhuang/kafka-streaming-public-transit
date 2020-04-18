@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-from config import Connections, NAMESPACE, join_topic_name
+from config import Connections, Topics, join_topic_name
 from models.producer import Producer
 
 
@@ -24,7 +24,7 @@ def configure_connector():
         logging.debug("connector already created skipping recreation")
         return
 
-    Producer(topic_name=join_topic_name(NAMESPACE, TABLE_NAME), num_partitions=2)
+    Producer(topic_name=join_topic_name(Topics.STATION_PREFIX, TABLE_NAME), num_partitions=2)
 
     resp = requests.post(
         KAFKA_CONNECT_URL,
@@ -45,7 +45,7 @@ def configure_connector():
                     "table.whitelist": TABLE_NAME,
                     "mode": "incrementing",
                     "incrementing.column.name": "stop_id",
-                    "topic.prefix": f"{NAMESPACE}.",
+                    "topic.prefix": f"{Topics.STATION_PREFIX}.",
                     "poll.interval.ms": 60000,
                 },
             }
