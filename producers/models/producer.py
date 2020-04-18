@@ -5,7 +5,7 @@ import time
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka.avro import AvroProducer
 
-from config import ConnectionUrls
+from config import Connections
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class Producer:
     def __init__(
         self,
         topic_name,
-        key_schema,
+        key_schema=None,
         value_schema=None,
         num_partitions=1,
         num_replicas=1,
@@ -32,8 +32,8 @@ class Producer:
         self.num_replicas = num_replicas
         self._client = None
         self.broker_properties = {
-            "bootstrap.servers": ConnectionUrls.KAFKA_BROKER,
-            "schema.registry.url": ConnectionUrls.SCHEMA_REGISTRY,
+            "bootstrap.servers": Connections.KAFKA_BROKER,
+            "schema.registry.url": Connections.SCHEMA_REGISTRY,
         }
 
         self.producer = AvroProducer(
@@ -58,8 +58,9 @@ class Producer:
     def create_topic(self):
         """Creates the producer topic if it does not already exist"""
 
-        if self.is_topic_exsited(self.topic_name):
-            logger.info(f"Topic {self.topic_name} already exists.")
+        if self.topic_exists(self.topic_name):
+            logger.info(f"Topic already exists: {self.topic_name}")
+            return
 
         futures = self.client.create_topics(
             [
@@ -78,10 +79,10 @@ class Producer:
             except Exception as exc:
                 logger.error(f"Failed to create topic {topic}: {exc}")
 
-    def is_topic_exsited(self, topic: str) -> bool:
-        """Check if the topic exists in the broker"""
-        cluster_metadata = self.client.list_topics()
-        topics = cluster_metadata.topics()
+    def topic_exists(self, topic: str) -> bool:
+        """Check if the topic exists in the Kafka"""
+        cluster_metadata = self.client.list_topics(timeout=5.0)
+        topics = cluster_metadata.topics
         return topic in topics
 
     def close(self):
