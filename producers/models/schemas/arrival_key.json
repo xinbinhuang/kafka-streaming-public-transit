@@ -1,7 +1,7 @@
 {
-  "namespace": "com.udacity",
+  "namespace": "org.chicago.cta.station.arrivals",
   "type": "record",
-  "name": "arrival.key",
+  "name": "key",
   "fields": [
     {
       "name": "timestamp",
