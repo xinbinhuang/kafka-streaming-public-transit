@@ -6,6 +6,8 @@ name = "pypi"
 [dev-packages]
 flake8 = "*"
 black = "*"
+pytest = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.7"
