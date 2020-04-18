@@ -35,15 +35,13 @@ class Turnstile(Producer):
             f"[{timestamp.isoformat()}] Riders count: {num_entries} @ {self.station.name}"
         )
         for _ in range(num_entries):
-            try:
-                self.producer.produce(
-                    topic=self.topic_name,
-                    key={"timestamp": self.time_millis()},
-                    value={
-                        "station_id": self.station.station_id,
-                        "station_name": self.station.name,
-                        "line": self.station.color.name,
-                    },
-                )
-            except Exception as exc:
-                logger.error(f"Failed to send message to Kafka: `{exc}`")
+            self.producer.poll(0)
+            self.producer.produce(
+                topic=self.topic_name,
+                key={"timestamp": self.time_millis()},
+                value={
+                    "station_id": self.station.station_id,
+                    "station_name": self.station.name,
+                    "line": self.station.color.name,
+                },
+            )

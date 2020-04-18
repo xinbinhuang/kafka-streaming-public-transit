@@ -34,6 +34,7 @@ class Producer:
         self.broker_properties = {
             "bootstrap.servers": Connections.KAFKA_BROKER,
             "schema.registry.url": Connections.SCHEMA_REGISTRY,
+            "on_delivery": delivery_report
         }
 
         self.producer = AvroProducer(
@@ -75,7 +76,7 @@ class Producer:
         for topic, future in futures.items():
             try:
                 future.result()
-                logger.info(f"Topic {topic} created")
+                logger.info(f"Topic created: {topic} ")
             except Exception as exc:
                 logger.error(f"Failed to create topic {topic}: {exc}")
 
@@ -92,3 +93,11 @@ class Producer:
     def time_millis(self):
         """Use this function to get the key for Kafka Events"""
         return int(round(time.time() * 1000))
+
+
+def delivery_report(err, msg):
+    """Callback on message delivery result"""
+    if err is not None:
+        logger.error(f"Message delivery failed: {err}")
+    else:
+        logger.info(f"Message delivered to {msg.topic()}[{msg.partition()}]")
