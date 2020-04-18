@@ -1,6 +1,4 @@
-"""Defines a time simulation responsible for executing any registered
-producers
-"""
+"""Defines a time simulation responsible for executing any registered producers"""
 import datetime
 import time
 from enum import IntEnum
@@ -11,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 # Import logging before models to ensure configuration is picked up
-logging.config.fileConfig(f"{Path(__file__).parents[0]}/logging.ini")
+logging.config.fileConfig(Path(__file__).parents[0] / "logging.ini")  # noqa
 
 from connector import configure_connector
 from models import Line, Weather
@@ -32,6 +30,7 @@ class TimeSimulation:
             self.time_step = datetime.timedelta(minutes=self.sleep_seconds)
 
         # Read data from disk
+        logger.info("Loading cta_stations.csv")
         self.raw_df = pd.read_csv(
             f"{Path(__file__).parents[0]}/data/cta_stations.csv"
         ).sort_values("order")
@@ -74,7 +73,7 @@ class TimeSimulation:
                 _ = [line.run(curr_time, self.time_step) for line in self.train_lines]
                 curr_time = curr_time + self.time_step
                 time.sleep(self.sleep_seconds)
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:
             logger.info("Shutting down")
             _ = [line.close() for line in self.train_lines]
 
