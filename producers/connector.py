@@ -25,7 +25,7 @@ def configure_connector():
         return
 
     # create required topic for sending data to Kafka
-    Producer(topic_name=Topics.STATIONS, num_partitions=2)
+    Producer(topic_name=Topics.STATIONS, num_partitions=1)
 
     resp = requests.post(
         KAFKA_CONNECT_URL,
