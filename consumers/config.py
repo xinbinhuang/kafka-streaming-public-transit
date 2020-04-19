@@ -1,6 +1,7 @@
 from typing import Dict
 
 NAMESPACE = "org.chicago.cta"
+CONSUMER_GROUP = 'public_transit_optimization'
 
 
 def join_topic_name(*names: str):
