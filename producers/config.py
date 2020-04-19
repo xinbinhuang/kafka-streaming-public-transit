@@ -26,5 +26,5 @@ class Topics:
     TURNSTILES: str = join_topic_name(NAMESPACE, "station.turnstiles")
     TURNSTILES_SUMMARY: str = join_topic_name(TURNSTILES, 'summary')
     STATIONS: str = join_topic_name(NAMESPACE, 'stations')
-    STATIONS_LINES: str = join_topic_name(STATIONS, 'lines')
+    STATIONS_LINE: str = join_topic_name(STATIONS, 'line')
     WEATHER: str = join_topic_name(NAMESPACE, 'weather')
