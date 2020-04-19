@@ -29,7 +29,10 @@ CREATE TABLE turnstile (
 );
 
 CREATE TABLE turnstile_summary
-    WITH (VALUE_FORMAT='JSON') AS
+    WITH (
+        KAFKA_TOPIC='{config.Topics.TURNSTILES_SUMMARY}',
+        VALUE_FORMAT='JSON'
+    ) AS
     SELECT
         station_id,
         COUNT(*) AS count
