@@ -24,7 +24,7 @@ class Connections:
 class Topics:
     ARRIVALS_PREFIX: str = join_topic_name(NAMESPACE, "station.arrivals")
     TURNSTILES: str = join_topic_name(NAMESPACE, "station.turnstiles")
-    TURNSTILES_SUMMARY: str = join_topic_name(TURNSTILES, 'stations_count')
+    TURNSTILES_SUMMARY: str = join_topic_name(TURNSTILES, 'summary')
     STATIONS: str = join_topic_name(NAMESPACE, 'stations')
     STATIONS_LINES: str = join_topic_name(STATIONS, 'lines')
     WEATHER: str = join_topic_name(NAMESPACE, 'weather')
