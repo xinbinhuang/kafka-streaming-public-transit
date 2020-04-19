@@ -34,7 +34,7 @@ class Producer:
         self.broker_properties = {
             "bootstrap.servers": Connections.KAFKA_BROKER,
             "schema.registry.url": Connections.SCHEMA_REGISTRY,
-            "on_delivery": delivery_report
+            "on_delivery": delivery_report,
         }
 
         self.producer = AvroProducer(

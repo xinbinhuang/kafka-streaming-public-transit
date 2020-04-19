@@ -1,7 +1,7 @@
 from typing import Dict
 
 NAMESPACE = "org.chicago.cta"
-CONSUMER_GROUP = 'public_transit_optimization'
+CONSUMER_GROUP = "public_transit_optimization"
 
 
 def join_topic_name(*names: str):
@@ -25,7 +25,7 @@ class Connections:
 class Topics:
     ARRIVALS_PREFIX: str = join_topic_name(NAMESPACE, "station.arrivals")
     TURNSTILES: str = join_topic_name(NAMESPACE, "station.turnstiles")
-    TURNSTILES_SUMMARY: str = join_topic_name(TURNSTILES, 'summary')
-    STATIONS: str = join_topic_name(NAMESPACE, 'stations')
-    STATIONS_LINE: str = join_topic_name(STATIONS, 'line')
-    WEATHER: str = join_topic_name(NAMESPACE, 'weather')
+    TURNSTILES_SUMMARY: str = join_topic_name(TURNSTILES, "summary")
+    STATIONS: str = join_topic_name(NAMESPACE, "stations")
+    STATIONS_LINE: str = join_topic_name(STATIONS, "line")
+    WEATHER: str = join_topic_name(NAMESPACE, "weather")
