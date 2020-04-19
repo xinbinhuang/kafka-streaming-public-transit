@@ -60,7 +60,7 @@ class Producer:
         """Creates the producer topic if it does not already exist"""
 
         if self.topic_exists(self.topic_name):
-            logger.info(f"Topic already exists: {self.topic_name}")
+            logger.debug(f"Topic already exists: {self.topic_name}")
             return
 
         futures = self.client.create_topics(
@@ -76,7 +76,7 @@ class Producer:
         for topic, future in futures.items():
             try:
                 future.result()
-                logger.info(f"Topic created: {topic} ")
+                logger.debug(f"Topic created: {topic}")
             except Exception as exc:
                 logger.error(f"Failed to create topic {topic}: {exc}")
 
