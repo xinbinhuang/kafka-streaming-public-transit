@@ -62,8 +62,10 @@ class TimeSimulation:
         logger.info("loading kafka connect jdbc source connector")
         configure_connector()
 
-        logger.info("beginning cta train simulation")
+        logger.info("Initializing weather model data")
         weather = Weather(curr_time.month)
+        
+        logger.info("beginning cta train simulation")
         try:
             while True:
                 logger.debug("simulation running: %s", curr_time.isoformat())
