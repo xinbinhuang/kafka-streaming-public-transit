@@ -23,14 +23,14 @@ CREATE TABLE turnstile (
     station_name STRING,
     line STRING
 ) WITH (
-    KAFKA_TOPIC='{config.Topics.TURNSTILES}',
+    KAFKA_TOPIC='{config.CtaTopics.TURNSTILES}',
     VALUE_FORMAT='AVRO',
     KEY='station_id'
 );
 
 CREATE TABLE turnstile_summary
     WITH (
-        KAFKA_TOPIC='{config.Topics.TURNSTILES_SUMMARY}',
+        KAFKA_TOPIC='{config.CtaTopics.TURNSTILES_SUMMARY}',
         VALUE_FORMAT='JSON'
     ) AS
     SELECT

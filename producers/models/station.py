@@ -1,7 +1,7 @@
 """Methods pertaining to loading and configuring CTA "L" station data."""
 import logging
 
-from config import join_topic_name, Topics
+from config import join_topic_name, CtaTopics
 from models import Turnstile
 from models.producer import Producer
 from models.utils import load_schema, normalize_station_name, RecordSchema
@@ -27,7 +27,7 @@ class Station(Producer):
         self.turnstile = Turnstile(self)
 
         station_name = normalize_station_name(self.name)
-        topic_name = join_topic_name(Topics.ARRIVALS_PREFIX, station_name)
+        topic_name = join_topic_name(CtaTopics.ARRIVALS_PREFIX, station_name)
         super().__init__(
             topic_name=topic_name,
             key_schema=Station.key_schema,

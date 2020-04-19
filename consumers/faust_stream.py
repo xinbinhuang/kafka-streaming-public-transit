@@ -35,16 +35,16 @@ class TransformedStation(faust.Record):
 
 app = faust.App("stations-stream", broker=KAFKA_BROKER, store="memory://")
 
-topic = app.topic(config.Topics.STATIONS, value_type=Station)
+topic = app.topic(config.CtaTopics.STATIONS, value_type=Station)
 out_topic = app.topic(
-    config.Topics.STATIONS_LINE,
+    config.CtaTopics.STATIONS_LINE,
     key_type=int,
     value_type=TransformedStation,
     partitions=1,
 )
 
 table = app.Table(
-    name=config.Topics.STATIONS_LINE,
+    name=config.CtaTopics.STATIONS_LINE,
     default=TransformedStation,
     partitions=1,
     changelog_topic=out_topic,

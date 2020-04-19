@@ -8,7 +8,7 @@ import requests
 
 from models.producer import Producer
 from models.utils import load_schema, RecordSchema
-from config import Connections, Topics
+from config import Connections, CtaTopics
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class Weather(Producer):
 
     def __init__(self, month):
         super().__init__(
-            topic_name=Topics.WEATHER,
+            topic_name=CtaTopics.WEATHER,
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=2,

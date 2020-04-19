@@ -58,17 +58,17 @@ class Line:
         """Given a kafka message, extract data"""
         topic: str = message.topic()
         # Set the conditional correctly to the stations Faust Table
-        if topic == config.Topics.STATIONS_LINE:
+        if topic == config.CtaTopics.STATIONS_LINE:
             try:
                 value = json.loads(message.value())
                 self._handle_station(value)
             except Exception as e:
                 logger.fatal("bad station? %s, %s", value, e)
         # Set the conditional to the arrival topics
-        elif topic.startswith(config.Topics.ARRIVALS_PREFIX):
+        elif topic.startswith(config.CtaTopics.ARRIVALS_PREFIX):
             self._handle_arrival(message)
         # Set the conditional to the KSQL Turnstile Summary Topic
-        elif topic == config.Topics.TURNSTILES_SUMMARY:
+        elif topic == config.CtaTopics.TURNSTILES_SUMMARY:
             json_data = json.loads(message.value())
             station_id = json_data.get("STATION_ID")
             station = self.stations.get(station_id)

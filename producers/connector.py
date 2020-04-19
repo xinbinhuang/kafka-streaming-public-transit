@@ -4,14 +4,14 @@ import logging
 
 import requests
 
-from config import Connections, Topics
+from config import Connections, CtaTopics
 from models.producer import Producer
 
 
 logger = logging.getLogger(__name__)
 
 KAFKA_CONNECT_URL = f"{Connections.CONNECT}/connectors"
-TOPIC_PREFIX, TABLE_NAME = Topics.STATIONS.rsplit(".", maxsplit=1)
+TOPIC_PREFIX, TABLE_NAME = CtaTopics.STATIONS.rsplit(".", maxsplit=1)
 CONNECTOR_NAME = f"jdbc_source_postgres_{TABLE_NAME}"
 
 
@@ -20,7 +20,7 @@ def configure_connector():
     logging.debug("creating or updating kafka connect connector...")
 
     # create required topic for sending data to Kafka
-    Producer(topic_name=Topics.STATIONS, num_partitions=1)
+    Producer(topic_name=CtaTopics.STATIONS, num_partitions=1)
 
     resp = requests.get(f"{KAFKA_CONNECT_URL}/{CONNECTOR_NAME}")
     if resp.status_code == 200:
