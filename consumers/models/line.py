@@ -2,8 +2,8 @@
 import json
 import logging
 
+import config
 from models import Station
-
 
 logger = logging.getLogger(__name__)
 
@@ -56,16 +56,19 @@ class Line:
 
     def process_message(self, message):
         """Given a kafka message, extract data"""
-        # TODO: Based on the message topic, call the appropriate handler.
-        if True: # Set the conditional correctly to the stations Faust Table
+        topic: str = message.topic()
+        # Set the conditional correctly to the stations Faust Table
+        if topic == config.Topics.STATIONS_LINE:
             try:
                 value = json.loads(message.value())
                 self._handle_station(value)
             except Exception as e:
                 logger.fatal("bad station? %s, %s", value, e)
-        elif True: # Set the conditional to the arrival topic
+        # Set the conditional to the arrival topics
+        elif topic.startswith(config.Topics.ARRIVALS_PREFIX):
             self._handle_arrival(message)
-        elif True: # Set the conditional to the KSQL Turnstile Summary Topic
+        # Set the conditional to the KSQL Turnstile Summary Topic
+        elif topic == config.Topics.TURNSTILES_SUMMARY:
             json_data = json.loads(message.value())
             station_id = json_data.get("STATION_ID")
             station = self.stations.get(station_id)
@@ -74,6 +77,4 @@ class Line:
                 return
             station.process_message(json_data)
         else:
-            logger.debug(
-                "unable to find handler for message from topic %s", message.topic
-            )
+            logger.debug("unable to find handler for message from topic %s", topic)
