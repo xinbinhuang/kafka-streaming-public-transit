@@ -7,7 +7,7 @@ import random
 import requests
 
 from models.producer import Producer
-from models.utils import load_schema
+from models.utils import load_schema, RecordSchema
 from config import Connections, Topics
 
 
@@ -23,8 +23,8 @@ class Weather(Producer):
 
     rest_proxy_url = Connections.REST_PROXY
 
-    key_schema = load_schema("weather_key.json").to_json()
-    value_schema = load_schema("weather_value.json").to_json()
+    key_schema: RecordSchema = load_schema("weather_key.json")
+    value_schema: RecordSchema = load_schema("weather_value.json")
 
     winter_months = set((0, 1, 2, 3, 10, 11))
     summer_months = set((6, 7, 8))
@@ -63,8 +63,8 @@ class Weather(Producer):
             headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
             data=json.dumps(
                 {
-                    "key_schema": json.dumps(Weather.key_schema),
-                    "value_schema": json.dumps(Weather.value_schema),
+                    "key_schema": json.dumps(Weather.key_schema.to_json()),
+                    "value_schema": json.dumps(Weather.value_schema.to_json()),
                     "records": [
                         {
                             "key": {"timestamp": self.time_millis()},
