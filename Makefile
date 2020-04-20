@@ -1,4 +1,4 @@
-iPHONY: init simulation ksql faust server all
+.PHONY: init simulation ksql faust server
 
 init:
 	pipenv install
