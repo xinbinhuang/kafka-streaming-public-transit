@@ -2,6 +2,7 @@
 import json
 import logging
 
+from config import CtaTopics
 from models import Line
 
 
@@ -19,9 +20,14 @@ class Lines:
 
     def process_message(self, message):
         """Processes a station message"""
-        if "org.chicago.cta.station" in message.topic():
+        topic: str = message.topic()
+        if topic.startswith(CtaTopics.ARRIVALS_PREFIX) or topic in [
+            CtaTopics.TURNSTILES,
+            CtaTopics.STATIONS,
+            CtaTopics.STATIONS_LINE,
+        ]:
             value = message.value()
-            if message.topic() == "org.chicago.cta.stations.table.v1":
+            if topic == CtaTopics.STATIONS_LINE:
                 value = json.loads(value)
             if value["line"] == "green":
                 self.green_line.process_message(message)
@@ -31,7 +37,7 @@ class Lines:
                 self.blue_line.process_message(message)
             else:
                 logger.debug("discarding unknown line msg %s", value["line"])
-        elif "TURNSTILE_SUMMARY" == message.topic():
+        elif topic == CtaTopics.TURNSTILES_SUMMARY:
             self.green_line.process_message(message)
             self.red_line.process_message(message)
             self.blue_line.process_message(message)
