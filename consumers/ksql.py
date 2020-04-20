@@ -43,7 +43,7 @@ CREATE TABLE turnstile_summary
 
 def execute_statement():
     """Executes the KSQL statement against the KSQL API"""
-    if topic_check.topic_exists("TURNSTILE_SUMMARY") is True:
+    if topic_check.topic_exists(config.CtaTopics.TURNSTILES_SUMMARY) is True:
         return
 
     logging.debug("executing ksql statement...")
